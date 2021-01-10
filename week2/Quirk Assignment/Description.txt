@@ -1,0 +1,9 @@
+Reversible computation in a quantum circuit simulator
+
+Try the quantum circuit simulator called Quirk, linked here: https://algassert.com/quirk.  Submit three files, as follows.
+
+1)  a screenshot of a circuit that involves at least one single-qubit gate and at least one 2-qubit gate.  
+
+2) a screenshot of an extension of the circuit in (1), where all the new gates are to the right of (1), and where the end result is that the entire circuit is the identity function on the input.
+
+3) an explanation of how you reversed the computation performed by (1), in the sense that first (1) took the qubits from input to output, and then the second half of (2) took that output back to the input.
