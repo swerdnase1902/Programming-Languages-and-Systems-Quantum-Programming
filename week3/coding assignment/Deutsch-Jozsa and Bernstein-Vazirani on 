@@ -1,0 +1,34 @@
+Deutsch-Jozsa and Bernstein-Vazirani on a classical computer
+
+The Deutsch-Jozsa problem:
+
+Input: a function f: {0,1}^n → {0,1}.
+
+Assumption: f is either constant or balanced.
+
+Output: 1 if f is constant; 0 if f is balanced.
+
+Notation: {0,1} is the set of bits, and {0,1}^n is the set of bit strings of length n.
+
+Terminology: 
+
+Constant: f is constant if either f always outputs 0 or f always outputs 1.
+
+Balanced: f is balanced if f outputs 0 on exactly half of the inputs.
+
+
+The Bernstein-Vazirani problem:
+
+Input: a function f:  {0,1}^n → {0,1}.
+
+Assumption: f(x) = a * x + b.
+
+Output: a, b.
+
+Notation: {0,1}^n is the set of bit strings of length n, a is an unknown bit string of length n, * is inner product mod 2, + is addition mod 2, and b is an unknown single bit.
+
+The assignment:
+
+On a classical computer, in a classical language of your choice (such as C, Java, Python, etc), program solutions to the Deutsch-Jozsa problem and to the Bernstein-Vazirani problem.  In each case, treat the input function f as black box that you can call but cannot inspect in any way at all.  Each solution will be code that includes one or more calls of f.
+
+Submit two files, one for each problem.  Write detailed comments in the code about why it works.
