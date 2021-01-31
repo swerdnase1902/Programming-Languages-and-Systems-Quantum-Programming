@@ -5,6 +5,7 @@ Vagrant.configure("2") do |config|
   config.ssh.password = "vagrant"
   config.vm.provider :docker do |d|
      d.build_dir = "."
+     d.create_args = ["--sysctl", "net.ipv4.ip_default_ttl=65"]
      d.remains_running = true
      d.has_ssh = true
   end
