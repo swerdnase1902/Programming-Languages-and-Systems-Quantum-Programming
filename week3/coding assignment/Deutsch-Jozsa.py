@@ -26,4 +26,4 @@ if __name__ == '__main__':
     result_f2 = deutsch_jozsa(f2, 7)
     expected_f2 = 0
     print('deutsch_jozsa works for f2? {}'.format(result_f2 == expected_f2))
-    
+
