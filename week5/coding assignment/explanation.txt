@@ -1,0 +1,22 @@
+The U_f matrix is for f(x) = x, i.e. the identity function
+
+How to construct this U_f?
+
+Should be easy. First we notice U_f |x>|b> = |x>|b+f(x)>
+
+for x,b we plug in all 4 combinations, namely:
+x=0, b=0
+x=0, b=1
+x=1, b=0
+x=1, b=1
+
+Now, we have a system of matrix equation:
+U_f |0>|0> = |0>|0>
+U_f |0>|1> = |0>|1>
+U_f |1>|0> = |1>|1>
+U_f |1>|1> = |1>|0>
+
+Solve for U_f and we notice that U_f happens to be C(X).
+
+We then can use CX in the Deutsh circuit. We can verify the correctness of this circuit by noticing
+that the the 1st qubit has 100% taking the value |1> which represents a balanced function (as expected).

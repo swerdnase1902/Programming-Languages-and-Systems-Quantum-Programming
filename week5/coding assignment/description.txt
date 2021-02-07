@@ -1,0 +1,1 @@
+The homework called Deutsch-Jozsa and Bernstein-Vazirani on a classical computer defined the Deutsch-Jozsa problem.  Implement the Deutsch-Jozsa algorithm on the quantum circuit simulator called Quirk, linked here: https://algassert.com/quirk.  Submit screenshots that show your implementation and illustrates that it works, and submit a file with an explanation of how it works.
