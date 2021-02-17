@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
   config.ssh.password = "vagrant"
   config.vm.provider :docker do |d|
      d.build_dir = "."
-     d.create_args = ["--sysctl", "net.ipv4.ip_default_ttl=65"]
+     d.create_args = ["--sysctl", "net.ipv4.ip_default_ttl=66"]
      d.build_args = ['-t', 'quantum_vm']
      d.name = "quantum_vm"
      d.remains_running = true
