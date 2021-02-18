@@ -74,7 +74,7 @@ To use Cirq one first needs to install Cirq.  Installation instructions are avai
 """
 
 # install latest version
-!pip install cirq==0.5 --quiet
+# !pip install cirq==0.5 --quiet
 
 # Alternatively, install directly from HEAD on github:
 # !pip install git+https://github.com/quantumlib/Cirq.git --quiet
@@ -112,7 +112,7 @@ a = cirq.NamedQubit("a")
 b = cirq.NamedQubit("b")
 c = cirq.NamedQubit("c")
 ops = [cirq.H(a), cirq.H(b), cirq.CNOT(b, c), cirq.H(b)]
-circuit = cirq.Circuit.from_ops(ops)
+circuit = cirq.Circuit(ops)
 print(circuit)
 
 """We can unpack this a bit and see all of the components for the circuit.
@@ -143,9 +143,9 @@ The result of those expressions is a `GateOperation` object, which is a type of 
 
 In cirq we make a strong distinction between `Operation`s and `Gate`s. An `Operation` is associated with specific qubits and can be put in `Circuit`s. A `Gate` has unspecified qubits, and will produce an operation when given qubits.
 
-Once you have a collection of operations, you can construct a `Circuit` using the class method `Circuit.from_ops` (more on that in a minute):
+Once you have a collection of operations, you can construct a `Circuit` using the class method `Circuit` (more on that in a minute):
 ```
-circuit = cirq.Circuit.from_ops(ops)
+circuit = cirq.Circuit(ops)
 ```
 The last thing we did in the example code was use the (surprisingly useful) ability to print the circuit as a text diagram.
 
@@ -197,7 +197,7 @@ def left_rotate(qubits):
         yield xor_swap(a, b)
 
 line = cirq.LineQubit.range(5)
-print(cirq.Circuit.from_ops(left_rotate(line)))
+print(cirq.Circuit(left_rotate(line)))
 
 """You may have noticed that there is a hole in what we've explained so far.
 `from_ops` effectively takes a 1-dimensional sequence of operations, but the output is a 2-dimensional circuit (a list-of-lists-of-operations).
@@ -294,7 +294,7 @@ def basic_circuit(measure=True):
     if measure:
         yield cirq.measure(a,b)
         
-circuit = cirq.Circuit.from_ops(basic_circuit())
+circuit = cirq.Circuit(basic_circuit())
 print(circuit)
 
 """There are a few things to note here.  
@@ -313,7 +313,7 @@ Now we can simulate this circuit.
 """
 
 simulator = cirq.Simulator()
-circuit = cirq.Circuit.from_ops(basic_circuit())
+circuit = cirq.Circuit(basic_circuit())
 result = simulator.run(circuit)
 print('Measurement results')
 print(result)
@@ -368,7 +368,7 @@ The simulator `run` methods also take an option for repeating the circuit. If
 the measurements in the circuit are terminal, and all other operations are unitary, this simulator is optimized to not recompute the wavefunction before sampling from the circuit.  So for example this code doesn't recompute the wave function but knows to sample from the final measurements
 """
 
-circuit = cirq.Circuit.from_ops(basic_circuit())
+circuit = cirq.Circuit(basic_circuit())
 result = simulator.run(circuit, repetitions=1000)
 print(result.histogram(key='a,b'))
 
@@ -514,13 +514,13 @@ def deutsch_algorithm(oracle):
 
 for key, oracle in oracles.items():
     print('Circuit for {}...'.format(key))
-    print('{}\n'.format(cirq.Circuit.from_ops(deutsch_algorithm(oracle))))
+    print('{}\n'.format(cirq.Circuit(deutsch_algorithm(oracle))))
 
 """Lets run these circuits a bunch of times to see that the measurement result ends up correctly distinguishing constant from balanced."""
 
 simulator = cirq.Simulator()
 for key, oracle in oracles.items():
-    result = simulator.run(cirq.Circuit.from_ops(deutsch_algorithm(oracle)), 
+    result = simulator.run(cirq.Circuit(deutsch_algorithm(oracle)), 
                           repetitions=10)
     print('oracle: {:<4} results: {}'.format(key, result))
 
@@ -536,12 +536,12 @@ balanced = ([cirq.CNOT(q0, q2)], [cirq.CNOT(q1, q2)], [cirq.CNOT(q0, q2), cirq.C
             [cirq.CNOT(q0, q2), cirq.X(q2)], [ cirq.CNOT(q1, q2), cirq.X(q2)], [cirq.CNOT(q0, q2), cirq.CNOT(q1, q2), cirq.X(q2)])
 for i, ops in enumerate(constant):
     print('\nConstant function {}'.format(i))
-    print(cirq.Circuit.from_ops(ops).to_text_diagram(qubit_order=[q0, q1, q2]))
+    print(cirq.Circuit(ops).to_text_diagram(qubit_order=[q0, q1, q2]))
     print()
 
 for i, ops in enumerate(balanced):
     print('\nBalanced function {}'.format(i))
-    print(cirq.Circuit.from_ops(ops).to_text_diagram(qubit_order=[q0, q1, q2]))
+    print(cirq.Circuit(ops).to_text_diagram(qubit_order=[q0, q1, q2]))
 
 """An extension of Deutsch's orginal algorithm is the Deutsch-Jozsa algorithm, which can distinguish constant from balanced functions like these using a single query to the oracle.  Write a quantum circuit that can distinguish these """
 
@@ -554,12 +554,12 @@ def your_circuit(oracle):
 
 print('Your result on constant functions')
 for oracle in constant:
-    result = simulator.run(cirq.Circuit.from_ops(your_circuit(oracle)), repetitions=10)
+    result = simulator.run(cirq.Circuit(your_circuit(oracle)), repetitions=10)
     print(result)
     
 print('Your result on balanced functions')
 for oracle in balanced:
-    result = simulator.run(cirq.Circuit.from_ops(your_circuit(oracle)), repetitions=10)
+    result = simulator.run(cirq.Circuit(your_circuit(oracle)), repetitions=10)
     print(result)
 
 """#### Solution"""
@@ -586,12 +586,12 @@ def your_circuit(oracle):
 
 print('Your result on constant functions')
 for oracle in constant:
-    result = simulator.run(cirq.Circuit.from_ops(your_circuit(oracle)), repetitions=10)
+    result = simulator.run(cirq.Circuit(your_circuit(oracle)), repetitions=10)
     print(result)
     
 print('Your result on balanced functions')
 for oracle in balanced:
-    result = simulator.run(cirq.Circuit.from_ops(your_circuit(oracle)), repetitions=10)
+    result = simulator.run(cirq.Circuit(your_circuit(oracle)), repetitions=10)
     print(result)
 
 """## Gates
@@ -614,23 +614,23 @@ ops = [
     cirq.CSWAP(q0, q1, q2),
     cirq.CCX(q0, q1, q2),
     cirq.ISWAP(q0, q1),
-    cirq.Rx(0.5 * np.pi)(q0),
-    cirq.Ry(.5 * np.pi)(q1),
-    cirq.Rz(0.5 * np.pi)(q2),
+    cirq.rx(0.5 * np.pi)(q0),
+    cirq.ry(.5 * np.pi)(q1),
+    cirq.rz(0.5 * np.pi)(q2),
     (cirq.X**0.5)(q0),
 ]
-print(cirq.Circuit.from_ops(ops))
+print(cirq.Circuit(ops))
 
 """For each of these gates, you can figure out how they act on the computational basis by calling `cirq.unitary` on the gate.  For example"""
 
 print(cirq.unitary(cirq.CNOT))
 
-print(cirq.unitary(cirq.Rx(0.5 * np.pi)))
+print(cirq.unitary(cirq.rx(0.5 * np.pi)))
 
 """For single qubit gates, we have named gates like `cirq.H` for the Hadmard gate, but probably more useful are the single qubit rotation gates.
 
 $$ 
-{\tt cirq.Rx(θ)}: \exp(-i \theta X) = cos \theta I - i \sin \theta X =\left[ \begin{array} ~\cos \theta & -i \sin \theta \\ -i \sin \theta & \cos \theta\end{array} \right] \\
+{\tt cirq.rx(θ)}: \exp(-i \theta X) = cos \theta I - i \sin \theta X =\left[ \begin{array} ~\cos \theta & -i \sin \theta \\ -i \sin \theta & \cos \theta\end{array} \right] \\
 $$ 
 $$ 
 {\tt cirq.Ry(θ)}: \exp(-i \theta Y) = cos \theta I - i \sin \theta Y =\left[ \begin{array} ~\cos \theta &  -\sin \theta \\  \sin \theta & \cos \theta\end{array} \right] \\
@@ -641,11 +641,11 @@ $$
 
 In addition to `cirq.unitary` another important method (behind the scenes, anyways) is `cirq.apply_unitary_to_tensor`.  This allows you to apply a unitary gate onto a state.  Of course we could have applied the unitary directly to the state, using `cirq.unitary`.   We'll see below in understanding how these methods are implemented that the `cirq.apply_unitary_to_tensor` can be used to apply the gate more directly onto the state and can save allocations of memory to store the unitary.  
 
-If we apply `cirq.Rx` to a state we can see how it rotates the state.  To do this let us introduce a new simulate method `simulate_moment_steps`.  This allows us to simulate the circuit `Moment` by `Moment`.  At each point we can access the state.  For example here we can use this to create a circuit that is a series of small `cirq.Rx` rotations and plot the probablility of measureing the state in the $|0\rangle$ state:
+If we apply `cirq.rx` to a state we can see how it rotates the state.  To do this let us introduce a new simulate method `simulate_moment_steps`.  This allows us to simulate the circuit `Moment` by `Moment`.  At each point we can access the state.  For example here we can use this to create a circuit that is a series of small `cirq.rx` rotations and plot the probablility of measureing the state in the $|0\rangle$ state:
 """
 
 a = cirq.NamedQubit('a')
-circuit = cirq.Circuit.from_ops([cirq.Rx(np.pi / 50.0)(a) for theta in range(200)])
+circuit = cirq.Circuit([cirq.rx(np.pi / 50.0)(a) for theta in range(200)])
 print('Circuit is a bunch of small rotations about Pauli X axis:')
 print('{}\n'.format(circuit))
 p0 = []
@@ -663,7 +663,7 @@ matplotlib.pyplot.plot(z, p0, 'o')
 
 repetitions = 100
 a = cirq.NamedQubit('a')
-circuit = cirq.Circuit.from_ops([cirq.Rx(np.pi / 50.0)(a) for theta in range(200)])
+circuit = cirq.Circuit([cirq.rx(np.pi / 50.0)(a) for theta in range(200)])
 p0 = []
 z = []
 for i, step in enumerate(simulator.simulate_moment_steps(circuit)):
@@ -703,13 +703,13 @@ class RationalGate(cirq.SingleQubitGate):
 
 a = cirq.NamedQubit('a')
 rg = RationalGate()
-print(cirq.Circuit.from_ops([rg(a)]))
+print(cirq.Circuit([rg(a)]))
 
 print(cirq.unitary(rg))
 
 """Let's check that we can use this gate in a simulation."""
 
-circuit = cirq.Circuit.from_ops([rg(a)])
+circuit = cirq.Circuit([rg(a)])
 simulator = cirq.Simulator()
 result = simulator.simulate(circuit)
 print(result.final_state)
@@ -724,12 +724,12 @@ TL;DR if you need to get performant multiqubit gates you should implement a cust
 
 ### Exercise: Custom Controlled Rx gate
 
-Recall that the `cirq.Rx` gate is a rotation about the $X$ pauli axis:
+Recall that the `cirq.rx` gate is a rotation about the $X$ pauli axis:
 $$ 
-{\tt cirq.Rx(θ)}: \exp(-i \theta X) = cos \theta I - i \sin \theta X =\left[ \begin{array} ~\cos \theta & -i \sin \theta \\ -i \sin \theta & \cos \theta\end{array} \right] \\
+{\tt cirq.rx(θ)}: \exp(-i \theta X) = cos \theta I - i \sin \theta X =\left[ \begin{array} ~\cos \theta & -i \sin \theta \\ -i \sin \theta & \cos \theta\end{array} \right] \\
 $$ 
 
-As an exercise, create a two qubit controlled `cirq.Rx` gate:
+As an exercise, create a two qubit controlled `cirq.rx` gate:
 $$
 {\tt CRx(\theta)}:
 \left[\begin{array}
@@ -768,7 +768,7 @@ print(np.around(cirq.unitary(CRx(0.25 * np.pi))))
 a = cirq.NamedQubit('a')
 b = cirq.NamedQubit('b')
 op = CRx(0.25 * np.pi)(a, b)
-print(cirq.Circuit.from_ops([op]))
+print(cirq.Circuit([op]))
 
 """#### Solution"""
 
@@ -797,7 +797,7 @@ a = cirq.NamedQubit('a')
 b = cirq.NamedQubit('b')
 op = CRx(0.25 * np.pi)(a, b)
 print('Circuit diagram:')
-print(cirq.Circuit.from_ops([op]))
+print(cirq.Circuit([op]))
 
 """### Gate decompositions
 
@@ -815,13 +815,13 @@ class HXGate(cirq.SingleQubitGate):
 HX = HXGate()
 
 a = cirq.NamedQubit('a')
-circuit = cirq.Circuit.from_ops([HX(a)])
+circuit = cirq.Circuit([HX(a)])
 print(circuit)
-print(cirq.Circuit.from_ops(cirq.decompose(circuit)))
+print(cirq.Circuit(cirq.decompose(circuit)))
 
 """Note that this not only decomposed the `HX` gate into `H` and `X`, it also decomposed `H` into `Y**0.5` and `X`.  In order to decompose only once, one can use `cirq.decompose_once`:"""
 
-print(cirq.Circuit.from_ops(cirq.decompose_once(HX(a))))
+print(cirq.Circuit(cirq.decompose_once(HX(a))))
 
 """When we define a gate, it is good practice to give a default decompose in terms of gates in `common_gates`.  However often you will want to change this decomposition at run time for the specific hardware or context you are working in.  To do this we can define an interceptor function which does this decomposition before falling back to the default."""
 
@@ -829,7 +829,7 @@ def my_decompose(op):
     if isinstance(op, cirq.GateOperation) and isinstance(op.gate, HXGate):
         return cirq.Z(*op.qubits), cirq.H(*op.qubits)
 
-cirq.Circuit.from_ops(cirq.decompose(HX(a), intercepting_decomposer=my_decompose))
+cirq.Circuit(cirq.decompose(HX(a), intercepting_decomposer=my_decompose))
 
 """You can also define a predicate that says which gates to keep without decomposing further.
 The default predicate is to only keep gates that cannot be decomposed.
@@ -912,7 +912,7 @@ $$\rho \rightarrow (1-p) \rho + \frac{p}{3} (X \rho X + Y \rho Y + Z \rho Z)$$
 In Cirq we can define such a channel and use it in a quantum circuit:
 """
 
-circuit = cirq.Circuit.from_ops(cirq.depolarize(0.2)(a), cirq.measure(a))
+circuit = cirq.Circuit(cirq.depolarize(0.2)(a), cirq.measure(a))
 print(circuit)
 
 """Previously we saw that gates could implement that `_unitary_` protocol, and by doing so they could be used to perform wave function simulation.  For noise the gates implement the `_channel_` protocol.  Classes that implement this protocol return the Krauss operators on their `_channel_` method.  Thus"""
@@ -927,7 +927,7 @@ for i, krauss in enumerate(cirq.channel(cirq.depolarize(0.2))):
 
 """In addition to the wave function simulator, Cirq also has a density matrix simulator.  Instead of keeping track of the wave function this simulator keeps track of the density matrix.  It has the same `run` and `simulate` type methods.  For example we can use this to simulate depolarizing channel and return the final density matrix of the system"""
 
-circuit = cirq.Circuit.from_ops(cirq.depolarize(0.2)(a))
+circuit = cirq.Circuit(cirq.depolarize(0.2)(a))
 print('Circuit:\n{}\n'.format(circuit))
 simulator = cirq.DensityMatrixSimulator()
 matrix = simulator.simulate(circuit).final_density_matrix
@@ -935,7 +935,7 @@ print('Final density matrix:\n{}'.format(matrix))
 
 """One thing to note is that the density matrix simulator simulates measurement statistically, and not as a channel where the outcome is not known.  Thus for example """
 
-circuit = cirq.Circuit.from_ops(cirq.depolarize(0.2)(a), cirq.measure(a))
+circuit = cirq.Circuit(cirq.depolarize(0.2)(a), cirq.measure(a))
 simulator = cirq.DensityMatrixSimulator()
 for _ in range(5):
     print(simulator.simulate(circuit).final_density_matrix)
@@ -958,7 +958,7 @@ print('does cirq.depolarize(0.2) have _mixture_? {}'.format('yes' if getattr(d, 
 
 """When channels implement mixture then, as we said, we can use the wave function simulator:"""
 
-circuit = cirq.Circuit.from_ops(cirq.depolarize(0.5).on(a), cirq.measure(a))
+circuit = cirq.Circuit(cirq.depolarize(0.5).on(a), cirq.measure(a))
 simulator = cirq.Simulator()
 result = simulator.run(circuit, repetitions=10)
 print(result)
@@ -971,7 +971,7 @@ For example we can define a noise model that add a single qubit depolarizing for
 """
 
 noise = cirq.ConstantQubitNoiseModel(cirq.depolarize(0.2))
-circuit = cirq.Circuit.from_ops(cirq.H(a), cirq.CNOT(a, b), cirq.measure(a, b))
+circuit = cirq.Circuit(cirq.H(a), cirq.CNOT(a, b), cirq.measure(a, b))
 print('Circuit with no noise:\n{}\n'.format(circuit))
 
 system_qubits = sorted(circuit.all_qubits())
@@ -981,7 +981,7 @@ for moment in circuit:
 print('Circuit with noise:\n{}'.format(noisy_circuit))
 
 noise = cirq.ConstantQubitNoiseModel(cirq.depolarize(0.2))
-circuit = cirq.Circuit.from_ops(cirq.H(a), cirq.CNOT(a, b), cirq.measure(a, b))
+circuit = cirq.Circuit(cirq.H(a), cirq.CNOT(a, b), cirq.measure(a, b))
 
 simulator = cirq.DensityMatrixSimulator(noise=noise)
 for i, step in enumerate(simulator.simulate_moment_steps(circuit)):
@@ -1012,7 +1012,7 @@ q56 = cirq.GridQubit(5, 6)
 q66 = cirq.GridQubit(6, 6)
 q67 = cirq.GridQubit(6, 7)
 ops = [cirq.CZ(q55, q56), cirq.CZ(q66, q67)]
-circuit = cirq.Circuit.from_ops(ops)
+circuit = cirq.Circuit(ops)
 print(circuit)
 print('But when we validate it against the device:')
 cirq.google.Bristlecone.validate_circuit(circuit)
@@ -1055,7 +1055,7 @@ class XZOptimizer(cirq.PointOptimizer):
                         new_operations=[new_op])
         
 opt = XZOptimizer()
-circuit = cirq.Circuit.from_ops(cirq.X(a), cirq.Z(a), cirq.CZ(a, b), cirq.X(a))
+circuit = cirq.Circuit(cirq.X(a), cirq.Z(a), cirq.CZ(a, b), cirq.X(a))
 print('Before\n{}\n'. format(circuit))
 opt.optimize_circuit(circuit)
 print('After\n{}'.format(circuit))
@@ -1086,7 +1086,7 @@ b: ───@───
 # Insert your code here.
 
 # Here is a circuit to test this on.
-circuit = cirq.Circuit.from_ops(cirq.H(a), cirq.H(a), cirq.H(b), 
+circuit = cirq.Circuit(cirq.H(a), cirq.H(a), cirq.H(b), 
                                 cirq.CNOT(a, b), cirq.H(a), cirq.H(b), 
                                 cirq.CZ(a, b))
 # Instantiate your optimizer
@@ -1141,11 +1141,11 @@ cirq.google.is_native_xmon_op(cirq.CNOT.on(cirq.NamedQubit('a'), cirq.NamedQubit
 
 converter = cirq.google.ConvertToXmonGates()
 converted = converter.convert(cirq.CNOT.on(cirq.NamedQubit('a'), cirq.NamedQubit('b')))
-print(cirq.Circuit.from_ops(converted))
+print(cirq.Circuit(converted))
 
 """This isn't very optimized because what it has done is first rely on the decompose of `CNOT` and then decomposed each of these into native xmon gates.  There are many tricks that one can use to simplify xmon gates.  To apply many of these one can use the `cirq.google.optimize_from_xmon` method:"""
 
-circuit = cirq.Circuit.from_ops([cirq.CNOT.on(cirq.NamedQubit('a'), cirq.NamedQubit('b'))])
+circuit = cirq.Circuit([cirq.CNOT.on(cirq.NamedQubit('a'), cirq.NamedQubit('b'))])
 print(cirq.google.optimized_for_xmon(circuit))
 
 """Because xmon gates can be executed on Google hardware, they will need to be transmitted as machine code to the quantum computer.  This means that they have a serialized form.  We use protobuffers as the serialization.  To see what this form looks like use `cirq.google.gate_to_proto_dict`:"""
@@ -1184,7 +1184,7 @@ cirq.testing.assert_decompose_is_consistent_with_unitary(InconsistentXGate())
 """**Export**. You can export a circuit as QASM."""
 
 a, b, c = cirq.LineQubit.range(3)
-circuit = cirq.Circuit.from_ops(cirq.H(a), cirq.H(c), cirq.CNOT(a, b), cirq.CCZ(a, b, c))
+circuit = cirq.Circuit(cirq.H(a), cirq.H(c), cirq.CNOT(a, b), cirq.CCZ(a, b, c))
 print(circuit.to_qasm())
 
 """You can also turn a circuit into a link to the drag-and-drop web simulation Quirk (though somewhat inconveniently)."""
