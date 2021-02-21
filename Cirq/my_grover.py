@@ -1,10 +1,17 @@
+from typing import List
+
 import cirq
 import numpy as np
-import matplotlib
+from matplotlib import pyplot as plt
 import argparse
 import time
 import random
 import statistics
+import sys
+
+import timeout_decorator
+
+
 class CustumFunction:
     def __init__(self, n, needle):
         # n is the number of bits that the function takes as input
@@ -69,17 +76,17 @@ def run_benchmark():
     print('We will do two benchmarks:')
     print('(1) We will study how different choices of f affects the runtime of Grover algorithm')
     print('(2) We will test how Grover simulation performs as the number of bits, n, increases')
-    num_of_f = 100  # will generate num_of_f different f
+    num_of_f = 1000  # will generate num_of_f different f
     num_runs_for_f = 5  # for each f, will run num_runs_for_f to reduce variation
     n = 12  # number of bits that f takes
     print('First, I will be testing how different choices of Z_f will affect the execution time by generating {} '
           'random '
           'f with n={} bits'.format(num_of_f, n))
-    run_times_log = list()
+    run_times_log_different_f: List[int] = list()
 
     for nof in range(num_of_f):
-        print('Running Grover on {} out of {} random functions'.format(nof+1, num_of_f))
-        needle = random.randint(0, (2**n)-1)
+        print('Running Grover on {} out of {} random functions'.format(nof + 1, num_of_f))
+        needle = random.randint(0, (2 ** n) - 1)
         f = CustumFunction(n, needle)
         avg_runtime_f = 0
         for run in range(num_runs_for_f):
@@ -90,17 +97,58 @@ def run_benchmark():
             simulator = cirq.Simulator()
             result = simulator.run(grover_f)
             end = time.time()
-            elasped_time = end-start
-            avg_runtime_f+=elasped_time
+            elasped_time = end - start
+            avg_runtime_f += elasped_time
         avg_runtime_f /= num_runs_for_f
-        run_times_log.append(avg_runtime_f)
+        run_times_log_different_f.append(avg_runtime_f)
     print('Finished testing how different choices of Z_f will affect the execution time by generating {} random '
           'f with n={} bits'.format(num_of_f, n))
     print('Here are some statistics: ', end='')
-    print('mean running time: {}, standard deviation of running time: {}'.format(statistics.mean(run_times_log), statistics.pstdev(run_times_log)))
+    print('mean running time: {}, standard deviation of running time: {}'.format(
+        statistics.mean(run_times_log_different_f), statistics.pstdev(run_times_log_different_f)))
 
-    max_n = 25
-    print('Second, we will vary n from 1 to {} to get a sense of how the number of bits affect the runtime')
+
+
+    @timeout_decorator.timeout(300, timeout_exception=StopIteration)
+    def timeout_wrapper(f, n):
+        Z_f = make_oracle(n, f)
+        grover_f = make_grover_curcuit(n, Z_f)
+        simulator = cirq.Simulator()
+        result = simulator.run(grover_f)
+
+    max_n = 14
+    print('Second, we will vary n from 1 to {} to get a sense of how the number of bits affect the runtime'.format(max_n))
+    run_times_log_different_n = list()
+    ns = list()
+    timeout_occurred = 0
+    for n in range(1, max_n + 1):
+        needle = random.randint(0, (2 ** n) - 1)
+        f = CustumFunction(n, needle)
+        start = time.time()
+        try:
+            print('Testing runtime for n={}'.format(n))
+            timeout_wrapper(f, n)
+            end = time.time()
+        except StopIteration:
+            timeout_occurred = n
+        if timeout_occurred:
+            print('Experienced timeout for n={}. Will not test bigger values of n...'.format(timeout_occurred))
+            break
+        else:
+            end = time.time()
+            elasped_time = end - start
+            run_times_log_different_n.append(elasped_time)
+            ns.append(n)
+
+    print('Finished testing how different values of n affect the runtime. Generating the report...')
+    if timeout_occurred:
+        print('Beware that we experienced a timeout (5 min) at n={}. The report below will not show any n>={}'.format(timeout_occurred, timeout_occurred))
+
+    plt.bar(ns, run_times_log_different_n, align='center')  # A bar chart
+    plt.xlabel('Number of bits')
+    plt.ylabel('Grover runtimes (seconds)')
+    plt.show()
+
 
 
 
@@ -133,9 +181,13 @@ if __name__ == '__main__':
 
     args = vars(argparser.parse_args())
 
-    if args['benchmark']:
-        run_benchmark()
-    else:
+    if args['custom_function']:
         n = int(args['num_bits'])
         needle = int(args['needle'])
         run_custom_input(n, needle)
+    elif args['benchmark']:
+        run_benchmark()
+    else:
+        print('Error: You need to either provide --benchmark option or --custom_function option. Exiting',
+              file=sys.stderr)
+        exit(1)
