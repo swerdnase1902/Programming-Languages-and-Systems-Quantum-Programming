@@ -112,3 +112,25 @@ We noticed that the running time grows exponentially as n grows, and that our co
 Here's the bar-graph that shows how the running time increases as n increases
 
 ![graph](./my_grover_log/num_bits_vs_runtime.png)
+
+### List three aspects of quantum programming in Cirq that turned out to be easy to learn and list three aspects that were difficult to learn.
+Easy to learn:
+1. Using Python
+2. Easy to follow examples
+3. Community support
+
+Hard to learn:
+1. Cannot use the old classical programming logic
+2. Number of qubits that can be handled is too low
+3. Python generator
+
+### List three positives and three negatives of the documentation of Cirq
+Positive
+1. Easy to follow
+2. Written by Google
+3. Documentation provides link to source code for easy reference
+
+Negative:
+1. Documentation on readthedocs removed
+2. Function signatures change from version to version
+3. A bit disorganized
