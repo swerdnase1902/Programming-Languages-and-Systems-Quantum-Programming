@@ -164,14 +164,14 @@ def run_custom_input(n, needle):
     print('Now, I am going to run the Grover circuit 10000 times to search for the needle...')
     print('Measurement results')
     print(result.histogram(key='result'))
-    print('If Grover circuit did it\'s job, then the most occurring key in the above result should be the needle...')
+    print('If Grover circuit did it\'s job, then the most occurring key in the above result should be the needle {}'.format(needle))
 
 
 if __name__ == '__main__':
 
     argparser = argparse.ArgumentParser(description='Demonstration of the Grover algorithm')
-    argparser.add_argument('-b', '--benchmark', help='Run various benchmark', default=True)
-    argparser.add_argument('-c', '--custom_function', help='Run Grover algorithm with custom input function',
+    argparser.add_argument('-b', '--benchmark', help='Run various benchmark', action='store_true', default=True)
+    argparser.add_argument('-c', '--custom_function', action='store_true', help='Run Grover algorithm with custom input function',
                            default=False)
     argparser.add_argument('-x', '--needle',
                            help='If --custom_function is set, set the x such that f(x)=1. This should be in decimal '
