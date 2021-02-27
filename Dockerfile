@@ -33,6 +33,7 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y git htop build-essential
 RUN python3 -m pip install timeout-decorator
 USER vagrant
 RUN cd /home/vagrant && git clone https://github.com/swerdnase1902/Programming-Languages-and-Systems-Quantum-Programming.git
+RUN cd /home/vagrant && git clone https://github.com/swerdnase1902/Quantum-Computing.git
 USER root
 EXPOSE 22
 EXPOSE 3389
