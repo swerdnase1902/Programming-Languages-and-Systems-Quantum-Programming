@@ -29,7 +29,7 @@ RUN cd /home/vagrant && gdown https://drive.google.com/uc?id=1SenEe57qei5AmOMwnq
 COPY installer.properties '/home/vagrant/mapleinstall/'
 RUN cd /home/vagrant/mapleinstall/ && chmod +x  ./Maple2019.0LinuxX64Installer_Downloadly.ir.run && ./Maple2019.0LinuxX64Installer_Downloadly.ir.run --mode unattended --optionfile installer.properties
 USER root
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y git htop build-essential && apt-get clean
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y git htop firefox build-essential && apt-get clean
 RUN python3 -m pip install timeout-decorator
 USER vagrant
 RUN cd /home/vagrant && git clone https://github.com/swerdnase1902/Programming-Languages-and-Systems-Quantum-Programming.git
