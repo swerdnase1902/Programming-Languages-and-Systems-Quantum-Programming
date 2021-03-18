@@ -19,7 +19,7 @@ USER vagrant
 RUN cd /home/vagrant && aria2c -q "https://download.jetbrains.com/product?code=PC&latest&distribution=linux" && tar xf *.tar.gz && rm *.tar.gz
 USER root
 RUN cd /home/vagrant && aria2c -q "https://go.microsoft.com/fwlink/?LinkID=760868" && DEBIAN_FRONTEND="noninteractive" apt install ./*.deb && rm *.deb
-RUN python3 -m pip install numpy scipy pandas sympy cirq requests qiskit
+RUN python3 -m pip install numpy scipy pandas sympy cirq requests qiskit jupyter qiskit[visualization]
 
 # Maple
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y lsb python3 python3-pip && apt-get clean
